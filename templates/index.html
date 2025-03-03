@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Me, Player</title>
+
+    <link rel="stylesheet" href="src/styles/index_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        footer {
+            text-align: center;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <input type="checkbox" id="menu-toggle">
+        <label for="menu-toggle" class="menu-button">&#9776;</label>
+        <nav class="menu-content">
+            <ul>
+                <li><a href="/rights">Правила использования</a></li>
+                <li><a href="/auth">Личный кабинет</a></li>
+            </ul>
+        </nav>
+    </div>
+    <header>
+        <h1 style="color: #ff6600;">Find Me, Player</h1>
+        <h2>Организация спортивных турниров</h2>
+        <nav>
+            <ul>
+                <li><a href="#about">О нас</a></li>
+                <li><a href="#tournaments">Турниры</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="about">
+        <h3>О нас</h3>
+        <p>Мы организуем турниры по баскетболу и американскому футболу для всех желающих. <strong>Присоединяйтесь</strong> к нам!</p>
+        <div class="image-container">
+            <img src="src/images/bb.jpg" alt="Баскетбольный мяч" width="400" class="bounce">
+            <img src="src/images/ftbl.jpg" alt="Футбольный мяч" width="400" class="rotate">
+        </div>
+    </section>
+
+    <section id="tournaments" class="ordered_list">
+        <h3>Актуальные соревнования</h3>
+        <ol>
+            <li>Турнир 3x3 - 10 марта</li>
+            <li>Любительская лига - 25 марта</li>
+            <li>Чемпионат города - 15 апреля</li>
+        </ol>
+    </section>
+
+    <section id="contact">
+        <h3>Контакты</h3>
+        <p>Свяжитесь с нами: <em>info@findmeplayer.com</em></p>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Find Me, Player. Все права защищены.</p>
+    </footer>
+</body>
+</html>
