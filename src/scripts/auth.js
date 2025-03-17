@@ -44,7 +44,28 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (isValid) {
-            registerForm.submit();
+            const formData = {
+                name: nameInput.value,
+                email: emailInput.value,
+                password: passwordInput.value,
+                age: ageInput.value
+            };
+
+            fetch("/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            })
+            .catch(error => {
+                console.error("Ошибка:", error);
+            });
         }
     });
 
