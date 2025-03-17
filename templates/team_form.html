@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявка на турнир</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        form { display: inline-block; text-align: left; }
+        label, input { display: block; margin-bottom: 10px; }
+        input { padding: 8px; width: 100%; }
+        button { padding: 10px; background: blue; color: white; border: none; cursor: pointer; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h2>Форма заявки на турнир</h2>
+    <form id="tournamentForm">
+        <label>Название команды:</label>
+        <input type="text" name="team_name" required>
+
+        <label>Игрок 1:</label>
+        <input type="text" name="player1" required>
+
+        <label>Игрок 2:</label>
+        <input type="text" name="player2" required>
+
+        <label>Игрок 3:</label>
+        <input type="text" name="player3" required>
+
+        <label>Игрок 4:</label>
+        <input type="text" name="player4" required>
+
+        <label>Игрок 5:</label>
+        <input type="text" name="player5" required>
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    <div id="errorMessage" class="error"></div>
+
+    <script>
+        document.getElementById('tournamentForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = {
+                team_name: document.querySelector('input[name="team_name"]').value,
+                player1: document.querySelector('input[name="player1"]').value,
+                player2: document.querySelector('input[name="player2"]').value,
+                player3: document.querySelector('input[name="player3"]').value,
+                player4: document.querySelector('input[name="player4"]').value,
+                player5: document.querySelector('input[name="player5"]').value,
+            };
+
+            // Проверка на то, что введены только буквы
+            const nameRegex = /^[A-Za-zА-Яа-я\s]+$/;
+            for (const key in formData) {
+                if (!nameRegex.test(formData[key])) {
+                    document.getElementById('errorMessage').textContent = 'Имена должны содержать только буквы';
+                    return;
+                }
+            }
+
+            try {
+                const response = await fetch('/team_form/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                const result = await response.json();
+                if (result.status === 'ok') {
+                    alert(result.message);
+                    window.location.href = '/';
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при отправке формы');
+            }
+        });
+    </script>
+</body>
+</html>

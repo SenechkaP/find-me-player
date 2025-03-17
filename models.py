@@ -13,3 +13,18 @@ class UserRegister(BaseModel):
         if not v.isalpha():
             raise ValueError("Имя должно содержать только буквы")
         return v
+
+
+class TeamForm(BaseModel):
+    team_name: str
+    player1: str
+    player2: str
+    player3: str
+    player4: str
+    player5: str
+
+    @field_validator('*')
+    def validate_names(cls, value):
+        if not value.replace(" ", "").isalpha():
+            raise ValueError('Имя должно содержать только буквы')
+        return value

@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
-from models import UserRegister
+from models import UserRegister, TeamForm
 from dotenv import load_dotenv
 import requests
 import os
@@ -54,9 +54,9 @@ def get_profile_page(request: Request, name: str, email: str, age: int = None):
     })
 
 
-@app.get("/form")
+@app.get("/team_form")
 async def form_page(request: Request):
-    return templates.TemplateResponse("form.html", {"request": request})
+    return templates.TemplateResponse("team_form.html", {"request": request})
 
 
 chat_id = os.getenv("CHAT_ID")
@@ -64,24 +64,17 @@ telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{telegram_bot_token}/sendMessage"
 
 
-@app.post("/form/submit")
-async def submit_form(
-        team_name: str = Form(...),
-        player1: str = Form(...),
-        player2: str = Form(...),
-        player3: str = Form(...),
-        player4: str = Form(...),
-        player5: str = Form(...),
-):
+@app.post("/team_form/submit")
+async def submit_form(form_data: TeamForm):
     message = (
         f"🏀 Новая заявка на турнир!\n\n"
-        f"📌 *Команда:* {team_name}\n\n"
+        f"📌 *Команда:* {form_data.team_name}\n\n"
         f"👤 *Игроки:*\n"
-        f"1️⃣ {player1}\n"
-        f"2️⃣ {player2}\n"
-        f"3️⃣ {player3}\n"
-        f"4️⃣ {player4}\n"
-        f"5️⃣ {player5}"
+        f"1️⃣ {form_data.player1}\n"
+        f"2️⃣ {form_data.player2}\n"
+        f"3️⃣ {form_data.player3}\n"
+        f"4️⃣ {form_data.player4}\n"
+        f"5️⃣ {form_data.player5}"
     )
 
     data = {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"}
