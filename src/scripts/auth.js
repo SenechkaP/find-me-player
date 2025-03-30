@@ -88,3 +88,35 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const loginForm = document.getElementById("login-form");
+
+    loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const emailInput = loginForm.elements["email"];
+        const passwordInput = loginForm.elements["password"];
+
+        const formData = {
+            email: emailInput.value,
+            password: passwordInput.value
+        };
+
+        fetch("/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        })
+        .catch(error => {
+            console.error("Ошибка:", error);
+        });
+    });
+});

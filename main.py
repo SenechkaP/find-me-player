@@ -1,13 +1,15 @@
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
-from models import UserRegister, TeamForm
-from dotenv import load_dotenv
-import requests
-import os
+from fastapi.responses import RedirectResponse, JSONResponse
 
-load_dotenv()
+from constances import make_tg_message
+from models import User, UserRegister, UserLogin, TeamForm
+from sqlalchemy.orm import Session
+from database import get_db
+from env_values import chat_id, TELEGRAM_API_URL
+from games_data import get_nba_games
+import requests
 
 app = FastAPI()
 
@@ -32,16 +34,29 @@ def get_auth_page(request: Request):
 
 
 @app.post("/auth/register")
-def register(user: UserRegister):
-    age_param = f"&age={user.age}" if user.age else ""
-    return RedirectResponse(url=f"/profile?name={user.name}&email={user.email}{age_param}", status_code=303)
+def register(user: UserRegister, db: Session = Depends(get_db)):
+    existing_user = db.query(User).filter(User.email == user.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email уже используется")
+
+    new_user = User(name=user.name, email=user.email, age=user.age)
+    new_user.set_password(user.password)
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return RedirectResponse(url=f"/profile?name={user.name}&email={user.email}&age={user.age}", status_code=303)
 
 
 @app.post("/auth/login")
-def login(email: str = Form(...), password: str = Form(...)):
-    pass
-    # запрос в бд за данными
-    # return RedirectResponse(url=f"/profile?email={email}", status_code=303)
+def login(user: UserLogin, db: Session = Depends(get_db)):
+    existing_user = db.query(User).filter(User.email == user.email).first()
+    if not existing_user or not existing_user.verify_password(user.password):
+        raise HTTPException(status_code=400, detail="Неверный email или пароль")
+
+    return RedirectResponse(
+        url=f"/profile?name={existing_user.name}&email={existing_user.email}&age={existing_user.age}", status_code=303)
 
 
 @app.get("/profile")
@@ -59,28 +74,43 @@ async def form_page(request: Request):
     return templates.TemplateResponse("team_form.html", {"request": request})
 
 
-chat_id = os.getenv("CHAT_ID")
-telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_API_URL = f"https://api.telegram.org/bot{telegram_bot_token}/sendMessage"
-
-
 @app.post("/team_form/submit")
 async def submit_form(form_data: TeamForm):
-    message = (
-        f"🏀 Новая заявка на турнир!\n\n"
-        f"📌 *Команда:* {form_data.team_name}\n\n"
-        f"👤 *Игроки:*\n"
-        f"1️⃣ {form_data.player1}\n"
-        f"2️⃣ {form_data.player2}\n"
-        f"3️⃣ {form_data.player3}\n"
-        f"4️⃣ {form_data.player4}\n"
-        f"5️⃣ {form_data.player5}"
+    try:
+        message = make_tg_message(form_data)
+        data = {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"}
+
+        response = requests.post(TELEGRAM_API_URL, data=data)
+        response.raise_for_status()
+
+        return JSONResponse(
+            status_code=200,
+            content={"status": "ok", "message": "Заявка отправлена!"}
+        )
+
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Ошибка при отправке в Telegram: {str(e)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Ошибка сервера: {str(e)}"
+        )
+
+
+@app.get("/nba_games")
+async def show_nba_games(request: Request):
+    games_data = await get_nba_games()
+    response = templates.TemplateResponse(
+        "games.html",
+        {
+            "request": request,
+            "days": games_data
+        }
     )
 
-    data = {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"}
-    response = requests.post(TELEGRAM_API_URL, data=data)
+    response.headers["Cache-Control"] = "public, max-age=3600"
 
-    if response.status_code == 200:
-        return {"status": "ok", "message": "Заявка отправлена!"}
-    else:
-        return {"status": "error", "message": "Ошибка отправки!"}
+    return response

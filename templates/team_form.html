@@ -52,7 +52,6 @@
                 player5: document.querySelector('input[name="player5"]').value,
             };
 
-            // Проверка на то, что введены только буквы
             const nameRegex = /^[A-Za-zА-Яа-я\s]+$/;
             for (const key in formData) {
                 if (!nameRegex.test(formData[key])) {
@@ -71,7 +70,7 @@
                 });
 
                 const result = await response.json();
-                if (result.status === 'ok') {
+                if (result.status_code === 200) {
                     alert(result.message);
                     window.location.href = '/';
                 } else {

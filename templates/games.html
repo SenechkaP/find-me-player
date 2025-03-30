@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Games This Week</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1d428a;
+            text-align: center;
+            border-bottom: 2px solid #c9082a;
+            padding-bottom: 10px;
+        }
+        .day-section {
+            margin-bottom: 25px;
+        }
+        .day-title {
+            background-color: #1d428a;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .game {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .team {
+            display: flex;
+            align-items: center;
+            width: 40%;
+        }
+        .home-team {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .visitor-team {
+            justify-content: flex-start;
+        }
+        .score {
+            width: 20%;
+            text-align: center;
+            font-weight: bold;
+        }
+        .winner {
+            font-weight: bold;
+            color: #03c03c;
+        }
+        .vs {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Игры NBA за эту неделю</h1>
+
+        {% for day in days %}
+        <div class="day-section">
+            <div class="day-title">Игры {{ day.title }}</div>
+
+            {% for game in day.games %}
+            <div class="game">
+                <div class="team home-team {% if game.home_team_score > game.visitor_team_score %}winner{% endif %}">
+                    {{ game.home_team }}
+                </div>
+                <div class="score">
+                    <span class="{% if game.home_team_score > game.visitor_team_score %}winner{% endif %}">
+                        {{ game.home_team_score }}
+                    </span>
+                    <span class="vs"> vs </span>
+                    <span class="{% if game.visitor_team_score > game.home_team_score %}winner{% endif %}">
+                        {{ game.visitor_team_score }}
+                    </span>
+                </div>
+                <div class="team visitor-team {% if game.visitor_team_score > game.home_team_score %}winner{% endif %}">
+                    {{ game.visitor_team }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

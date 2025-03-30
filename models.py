@@ -1,5 +1,26 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional
+from sqlalchemy import Column, String, Integer, Text
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
+import bcrypt
+from database import Base
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String(30), nullable=False)
+    email = Column(Text, unique=True, nullable=False)
+    password_hash = Column(Text, nullable=False)
+    age = Column(Integer, nullable=True)
+
+    def set_password(self, password: str):
+        self.password_hash = bcrypt.hashpw(password.encode("UTF-8"), bcrypt.gensalt())
+
+    def verify_password(self, password: str) -> bool:
+        return bcrypt.checkpw(password.encode("UTF-8"), self.password_hash.encode("UTF-8"))
 
 
 class UserRegister(BaseModel):
@@ -13,6 +34,11 @@ class UserRegister(BaseModel):
         if not v.isalpha():
             raise ValueError("Имя должно содержать только буквы")
         return v
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
 
 
 class TeamForm(BaseModel):
