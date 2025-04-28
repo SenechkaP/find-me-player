@@ -2,15 +2,41 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/styles/profile_style.css">
 </head>
 <body>
-    <h1>Привет, {{ name }}!</h1>
-    <p>Email: {{ email }}</p>
-    {% if age %}
-        <p>Возраст: {{ age }}</p>
-    {% else %}
-        <p>Возраст не указан</p>
-    {% endif %}
+    <div class="profile-container">
+        <h1>{{ name }}</h1>
+
+        <div class="user-info">
+            <p><strong>Email:</strong> {{ email }}</p>
+            {% if age %}
+                <p><strong>Возраст:</strong> {{ age }}</p>
+            {% else %}
+                <p><strong>Возраст:</strong> не указан</p>
+            {% endif %}
+        </div>
+
+        <div class="post-form">
+            <h3>Создать новый пост</h3>
+            <form>
+                <textarea name="post_content" placeholder="Введите текст публикации..."></textarea>
+                <button type="submit">Опубликовать</button>
+            </form>
+        </div>
+
+        <div class="actions">
+            <div class="posts-container">
+                <a href="/profile/posts">Мои посты</a>
+            </div>
+            <div class="logout-container">
+                <a href="/logout">Выйти</a>
+            </div>
+        </div>
+    </div>
 </body>
+<script src="/src/scripts/profile.js"></script>
 </html>

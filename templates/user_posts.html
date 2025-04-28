@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои посты</title>
+    <link rel="stylesheet" href="/src/styles/profile_style.css">
+</head>
+<body>
+    <div class="profile-container">
+        <h1>Мои посты ({{ name }})</h1>
+
+        {% for post in posts %}
+            <div class="post" data-post-id="{{ post.id }}">
+                <p>{{ post.content }}</p>
+                <span class="like-count">❤️ {{ post.likes }}</span>
+                <p><small>Создано: {{ post.created_at.strftime('%d.%m.%Y %H:%M') }}</small></p>
+            </div>
+        {% endfor %}
+    </div>
+<script src="/src/scripts/likes_ws.js"></script>
+</body>
+</html>

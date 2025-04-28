@@ -5,6 +5,9 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 import bcrypt
 from database import Base
+from sqlalchemy import ForeignKey, DateTime
+from sqlalchemy.orm import relationship
+from datetime import datetime
 
 
 class User(Base):
@@ -17,10 +20,31 @@ class User(Base):
     age = Column(Integer, nullable=True)
 
     def set_password(self, password: str):
-        self.password_hash = bcrypt.hashpw(password.encode("UTF-8"), bcrypt.gensalt())
+        self.password_hash = bcrypt.hashpw(password.encode("UTF-8"), bcrypt.gensalt()).decode("UTF-8")
 
     def verify_password(self, password: str) -> bool:
         return bcrypt.checkpw(password.encode("UTF-8"), self.password_hash.encode("UTF-8"))
+
+
+class Post(Base):
+    __tablename__ = "posts"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    likes = Column(Integer, default=0)
+
+    user = relationship("User", backref="posts")
+
+
+class Like(Base):
+    __tablename__ = "likes"
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True)
+    post_id = Column(UUID(as_uuid=True), ForeignKey("posts.id"), primary_key=True)
+
+    post = relationship("Post", backref="likes_received")
+    user = relationship("User", backref="likes_given")
 
 
 class UserRegister(BaseModel):
@@ -54,3 +78,7 @@ class TeamForm(BaseModel):
         if not value.replace(" ", "").isalpha():
             raise ValueError('Имя должно содержать только буквы')
         return value
+
+
+class UserPost(BaseModel):
+    content: str

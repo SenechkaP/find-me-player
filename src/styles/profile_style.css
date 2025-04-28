@@ -1,0 +1,96 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.profile-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: black;
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.user-info p {
+    margin: 10px 0;
+    font-size: 1.1em;
+}
+
+.post-form {
+    margin: 30px 0;
+}
+
+.post-form textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 1em;
+    min-height: 100px;
+    resize: vertical;
+    margin: 0 0 15px 0;
+    box-sizing: border-box;
+}
+
+.post-form button {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+.post-form button:hover {
+    background-color: #808080;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.posts-container a {
+    font-size: 1em;
+    color: black;
+    text-decoration: none;
+    border: 2px solid black;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.posts-container a:hover {
+    background-color: black;
+    color: white;
+}
+
+.logout-container a {
+    font-size: 1em;
+    color: #b00000;
+    text-decoration: none;
+    border: 2px solid #b00000;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.logout-container a:hover {
+    background-color: #b00000;
+    color: white;
+}
