@@ -144,18 +144,28 @@ def my_posts(request: Request, db: Session = Depends(get_db)):
 @app.get("/posts")
 def all_posts(request: Request, db: Session = Depends(get_db)):
     token = request.cookies.get("access_token")
-    payload = verify_token(token)
-    if not payload:
+
+    if not token:
         return RedirectResponse("/auth")
 
-    user_id = payload.get("sub")
-    posts = db.query(Post).order_by(Post.created_at.desc()).all()
+    try:
+        payload = verify_token(token)
+        user_id = payload.get("sub")
 
-    return templates.TemplateResponse("all_posts.html", {
-        "request": request,
-        "posts": posts,
-        "user_id": user_id
-    })
+        if not user_id:
+            return RedirectResponse("/auth")
+
+        posts = db.query(Post).order_by(Post.created_at.desc()).all()
+
+        return templates.TemplateResponse("all_posts.html", {
+            "request": request,
+            "posts": posts,
+            "user_id": user_id
+        })
+
+    except Exception as e:
+        print(f"Token verification failed: {str(e)}")
+        return RedirectResponse("/auth")
 
 
 @app.post("/posts/{post_id}/like")
