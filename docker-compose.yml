@@ -1,10 +1,6 @@
 services:
   web:
     build: .
-    volumes:
-      - .:/app
-      - ./src:/app/src
-      - ./templates:/app/templates
     ports:
       - "8000:8000"
     env_file:
@@ -13,6 +9,8 @@ services:
       - db
     environment:
       - PYTHONPATH=/app
+    networks:
+      - app-network
 
   db:
     image: postgres:15.8
@@ -22,8 +20,10 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
+    networks:
+      - app-network
 volumes:
   postgres_data:
+
+networks:
+  app-network:
