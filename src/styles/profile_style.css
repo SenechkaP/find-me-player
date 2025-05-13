@@ -94,3 +94,21 @@ h1 {
     background-color: #b00000;
     color: white;
 }
+
+.link-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.link-container a {
+    font-size: 1.2em;
+    color: black;
+    text-decoration: none;
+    border: 2px solid black;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+.link-container a:hover {
+    background-color: black;
+    color: white;
+}
