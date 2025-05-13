@@ -18,7 +18,7 @@ jobs:
           username: ${{ secrets.SSH_LOGIN }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd /my_project/find-me-player
+            cd my_project/find-me-player
             git pull origin main
             docker-compose down
             docker-compose up -d --build
